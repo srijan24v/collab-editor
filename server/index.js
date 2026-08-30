@@ -14,7 +14,7 @@ const io = new Server(server, {
 
 app.post('/execute', async (req, res) => {
   try {
-    const response = await fetch('http://localhost:2000/api/v2/execute', {
+    const response = await fetch('https://manual-theatre-basketball-dinner.trycloudflare.com/api/v2/execute', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(req.body)
