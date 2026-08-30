@@ -41,3 +41,6 @@ yarn-error.log*
 next-env.d.ts
 
 server/node_modules
+
+cloudflared.exe
+cloudflared.exe.exe
