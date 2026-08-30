@@ -29,7 +29,7 @@ export default function RoomClient({ params }: { params: Promise<{ roomId: strin
     awarenessRef.current = awareness;
     awareness.setLocalStateField('user', { name: randomName, color: randomColor });
 
-    const socket = io('http://localhost:3001');
+    const socket = io('https://collab-editor-server-9z0h.onrender.com');
     socketRef.current = socket;
 
     socket.on('connect', () => {
@@ -85,7 +85,7 @@ export default function RoomClient({ params }: { params: Promise<{ roomId: strin
     setOutput('Running...');
 
     try {
-      const res = await fetch('http://localhost:3001/execute', {
+      const res = await fetch('https://collab-editor-server-9z0h.onrender.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
