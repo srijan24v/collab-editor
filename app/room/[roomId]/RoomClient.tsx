@@ -85,7 +85,7 @@ export default function RoomClient({ params }: { params: Promise<{ roomId: strin
     setOutput('Running...');
 
     try {
-      const res = await fetch('https://collab-editor-server-9z0h.onrender.com', {
+      const res = await fetch('https://collab-editor-server-9z0h.onrender.com/execute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
