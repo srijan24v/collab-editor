@@ -20,6 +20,7 @@ export default function RoomClient({ params }: { params: Promise<{ roomId: strin
 
   const [output, setOutput] = useState('');
   const [running, setRunning] = useState(false);
+  const [language, setLanguage] = useState('javascript');
 
   useEffect(() => {
     const ydoc = new Y.Doc();
@@ -89,12 +90,12 @@ export default function RoomClient({ params }: { params: Promise<{ roomId: strin
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          language: 'javascript',
-          version: '18.15.0',
+          language: language,
+          version: language === 'python' ? '3.10.0' : language === 'javascript' ? '18.15.0' : '10.2.0',
           files: [{ content: code }]
         })
       });
-            const data = await res.json();
+      const data = await res.json();
       console.log('API response:', data);
       setOutput(data?.run?.output || JSON.stringify(data) || 'No output');
     } catch (err) {
@@ -107,34 +108,69 @@ export default function RoomClient({ params }: { params: Promise<{ roomId: strin
   return (
     <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column' }}>
       <div style={{
-        color: 'white',
-        padding: '8px',
-        background: '#1e1e1e',
+        color: '#eef0f5',
+        padding: '10px 16px',
+        background: '#14161f',
+        borderBottom: '1px solid #2a2d3a',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center'
       }}>
-        <span>Room: {roomId} — You are: <span style={{ color: randomColor }}>{randomName}</span></span>
-        <button
-          onClick={runCode}
-          disabled={running}
-          style={{
-            padding: '6px 16px',
-            background: running ? '#555' : '#2ea043',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: running ? 'default' : 'pointer'
-          }}
-        >
-          {running ? 'Running...' : '▶ Run Code'}
-        </button>
+        <span>
+          Room: <span style={{ color: '#8a8f9c' }}>{roomId}</span> — You are: <span style={{ color: randomColor }}>{randomName}</span>
+        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button
+            onClick={() => navigator.clipboard.writeText(window.location.href)}
+            style={{
+              padding: '6px 12px',
+              background: 'transparent',
+              color: '#4fb3bf',
+              border: '1px solid #4fb3bf',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '13px'
+            }}
+          >
+            Copy Link
+          </button>
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            style={{
+              padding: '6px 10px',
+              background: '#1c1f2b',
+              color: 'white',
+              border: '1px solid #2a2d3a',
+              borderRadius: '4px'
+            }}
+          >
+            <option value="javascript">JavaScript</option>
+            <option value="python">Python</option>
+            <option value="gcc">C</option>
+          </select>
+          <button
+            onClick={runCode}
+            disabled={running}
+            style={{
+              padding: '6px 16px',
+              background: running ? '#555' : '#e8a33d',
+              color: '#14161f',
+              fontWeight: 600,
+              border: 'none',
+              borderRadius: '4px',
+              cursor: running ? 'default' : 'pointer'
+            }}
+          >
+            {running ? 'Running...' : '▶ Run Code'}
+          </button>
+        </div>
       </div>
 
       <div style={{ flex: 1 }}>
         <Editor
           height="100%"
-          defaultLanguage="javascript"
+          language={language === 'gcc' ? 'c' : language}
           theme="vs-dark"
           onMount={handleEditorMount}
         />
