@@ -6,6 +6,8 @@ import Editor from '@monaco-editor/react';
 import * as Y from 'yjs';
 import { MonacoBinding } from 'y-monaco';
 import { Awareness, encodeAwarenessUpdate, applyAwarenessUpdate } from 'y-protocols/awareness';
+import { Tldraw } from 'tldraw';
+import 'tldraw/tldraw.css';
 
 const COLORS = ['#ff5c5c', '#5cff8f', '#5cb3ff', '#ffe45c', '#c95cff'];
 const randomName = `User${Math.floor(Math.random() * 1000)}`;
@@ -21,6 +23,7 @@ export default function RoomClient({ params }: { params: Promise<{ roomId: strin
   const [output, setOutput] = useState('');
   const [running, setRunning] = useState(false);
   const [language, setLanguage] = useState('javascript');
+  const [view, setView] = useState<'code' | 'canvas'>('code');
 
   useEffect(() => {
     const ydoc = new Y.Doc();
@@ -116,9 +119,41 @@ export default function RoomClient({ params }: { params: Promise<{ roomId: strin
         justifyContent: 'space-between',
         alignItems: 'center'
       }}>
-        <span>
-          Room: <span style={{ color: '#8a8f9c' }}>{roomId}</span> — You are: <span style={{ color: randomColor }}>{randomName}</span>
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <span>
+            Room: <span style={{ color: '#8a8f9c' }}>{roomId}</span> — You are: <span style={{ color: randomColor }}>{randomName}</span>
+          </span>
+          <div style={{ display: 'flex', gap: '4px', marginLeft: '16px' }}>
+            <button
+              onClick={() => setView('code')}
+              style={{
+                padding: '4px 12px',
+                background: view === 'code' ? '#2a2d3a' : 'transparent',
+                color: view === 'code' ? '#eef0f5' : '#6a6f7c',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '13px'
+              }}
+            >
+              Code
+            </button>
+            <button
+              onClick={() => setView('canvas')}
+              style={{
+                padding: '4px 12px',
+                background: view === 'canvas' ? '#2a2d3a' : 'transparent',
+                color: view === 'canvas' ? '#eef0f5' : '#6a6f7c',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '13px'
+              }}
+            >
+              Canvas
+            </button>
+          </div>
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button
             onClick={() => navigator.clipboard.writeText(window.location.href)}
@@ -167,13 +202,16 @@ export default function RoomClient({ params }: { params: Promise<{ roomId: strin
         </div>
       </div>
 
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, display: view === 'code' ? 'block' : 'none' }}>
         <Editor
           height="100%"
           language={language === 'gcc' ? 'c' : language}
           theme="vs-dark"
           onMount={handleEditorMount}
         />
+      </div>
+      <div style={{ flex: 1, display: view === 'canvas' ? 'block' : 'none' }}>
+        <Tldraw />
       </div>
 
       <div style={{
@@ -184,7 +222,8 @@ export default function RoomClient({ params }: { params: Promise<{ roomId: strin
         fontFamily: 'monospace',
         overflowY: 'auto',
         borderTop: '1px solid #333',
-        whiteSpace: 'pre-wrap'
+        whiteSpace: 'pre-wrap',
+        display: view === 'code' ? 'block' : 'none'
       }}>
         {output || '// output will appear here'}
       </div>

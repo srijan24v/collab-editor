@@ -62,12 +62,14 @@ Then update `server/index.js`'s `/execute` route to point at `http://localhost:2
 - Code execution depends on the local Piston + tunnel being active; it isn't always live on the deployed site.
 - No persistence — rooms and their content are lost once everyone disconnects.
 - No authentication — anyone with a room link can join.
+- The Canvas tab (tldraw) is currently solo/local per user — not synced between collaborators yet. Real-time canvas sync requires tldraw's own sync protocol (a separate WebSocket server from the Socket.io one used for code), which is scoped as future work rather than rushed in.
 
 ## What I'd improve next
 
 - Host the execution engine on infrastructure that allows privileged containers (a small VPS) instead of tunneling from a local machine.
 - Add room persistence and history.
 - Add a collaborative whiteboard tab for sketching data structures.
+- Sync the whiteboard tab in real time using tldraw's official sync package (its own WebSocket protocol, separate from the code editor's Socket.io setup).
 
 ## Why these choices
 
